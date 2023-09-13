@@ -78,7 +78,7 @@ dplyr::select(yearID, W, L)
 
 ```{r expected winning percentage}
 mets_ben <- Teams |>
-  dplyr::select(teamID,yearID,R,RA) |>
+  dplyr::select(teamID,yearID,R,RA,G,W) |>
   dplyr::filter(teamID == "NYN" & yearID %in% 2004:2012)
 mets_ben
 
@@ -118,15 +118,26 @@ mets_ben
 
 ### Exercise 4
 
-...
+```{r mutate(actual winning percentage)}
+mets_ben <- mets_ben |>
+  dplyr::mutate(WPct = 1/(1+(RA/RS)^2))
+mets_ben
+
+mets_ben <- mets_ben |>
+  dplyr::mutate(W_hat = WPct*G)
+mets_ben
+
+```
 
 ### Exercise 5
 
-...
+-   better than expected is calculated by counting the seasons where the actual wins (W) were greater than the expected wins (W_hat).
+
+-   Worse than expected is calculated by counting the seasons where the actual wins (W) were less than the expected wins (W_hat).
+
+Mets were better than expected in three of these seasons, and worse than expected in the other six.
 
 ### Exercise 6
-
-...
 
 ### Exercise 7
 
