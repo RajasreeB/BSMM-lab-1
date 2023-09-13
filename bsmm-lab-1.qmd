@@ -78,7 +78,7 @@ dplyr::select(yearID, W, L)
 
 ```{r expected winning percentage}
 mets_ben <- Teams |>
-  dplyr::select(teamID,yearID,R,RA,G,W) |>
+  dplyr::select(teamID,yearID,R,RA,G,W,L) |>
   dplyr::filter(teamID == "NYN" & yearID %in% 2004:2012)
 mets_ben
 
@@ -139,13 +139,32 @@ Mets were better than expected in three of these seasons, and worse than expecte
 
 ### Exercise 6
 
+```{r sorting rows}
+dplyr::arrange(mets_ben,desc(WPct))
+```
+
 ### Exercise 7
 
-...
+```{r}
+mets_ben %>% 
+  dplyr::mutate(Diff = WPct-W_hat) |>
+  dplyr::arrange(desc(Diff))
+```
 
 ### Exercise 8
 
-...
+```{r}
+mets_ben |>
+  dplyr::summarize(
+    num_years = '9', 
+    total_W = sum(W), 
+    total_L = sum(L), 
+    total_WPct = sum(WPct), 
+    sum_resid = sum(WPct-W_hat)
+  )
+```
+
+In these nine years, the Mets had a combined record of 728 wins and 730 losses, for an overall winning percentage of 4.559514.
 
 ### Exercise 9
 
