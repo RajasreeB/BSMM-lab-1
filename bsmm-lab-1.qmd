@@ -72,9 +72,49 @@ dplyr::select(yearID, W, L)
 | 2012    | 74      | 88      |
 +---------+---------+---------+
 
-The above table shows the team W/L record during those years.
+**The above table shows the team W/L record during those years.**
 
 ### Exercise 3
+
+```{r expected winning percentage}
+mets_ben <- Teams |>
+  dplyr::select(teamID,yearID,R,RA) |>
+  dplyr::filter(teamID == "NYN" & yearID %in% 2004:2012)
+mets_ben
+
+dplyr::glimpse(mets_ben)
+
+mets_ben <- mets_ben |>
+  dplyr::rename(RS = R)    # new name = old name
+mets_ben
+
+```
+
+**Runs scored and allowed are saved in a new data frame.**
+
++----------+---------+---------+---------+
+| teamID   | yearID  | RS      | RA      |
+|          |         |         |         |
+| \<fctr\> | \<int\> | \<int\> | \<int\> |
++:=========+========:+========:+========:+
+| NYN      | 2004    | 684     | 731     |
++----------+---------+---------+---------+
+| NYN      | 2005    | 722     | 648     |
++----------+---------+---------+---------+
+| NYN      | 2006    | 834     | 731     |
++----------+---------+---------+---------+
+| NYN      | 2007    | 804     | 750     |
++----------+---------+---------+---------+
+| NYN      | 2008    | 799     | 715     |
++----------+---------+---------+---------+
+| NYN      | 2009    | 671     | 757     |
++----------+---------+---------+---------+
+| NYN      | 2010    | 656     | 652     |
++----------+---------+---------+---------+
+| NYN      | 2011    | 718     | 742     |
++----------+---------+---------+---------+
+| NYN      | 2012    | 650     | 709     |
++----------+---------+---------+---------+
 
 ### Exercise 4
 
