@@ -25,18 +25,56 @@ library(Lahman)
 ### Exercise 1
 
 ```{r glimpse-data}
+#good practise to lable your code chunks this way
 dplyr::glimpse(Teams)
 ```
 
-The `Teams` dataset has \_3015\_ observations and \_48\_ variables.
+The `Teams` dataset has \_**3015**\_ observations (rows) and \_**48**\_ variables(columns).
 
 ### Exercise 2
 
-...
+```{r filter-select}
+library(dplyr)
+#pipe operator (%>%) from the dplyr package is not recognized, therefore make sure to load the package 
+mets <- Teams  %>% 
+  dplyr::filter(teamID == "NYN")
+#selects rows where the "teamID" column is equal to "NYN"
+my_mets <- mets %>% 
+  dplyr::filter(yearID >= 2004 & yearID <= 2012)
+# Specify the years for which you want W/L records
+my_mets %>% 
+dplyr::select(yearID, W, L)
+# Select the relevant columns
+
+```
+
++---------+---------+---------+
+| yearID  | W       | L       |
+|         |         |         |
+| \<int\> | \<int\> | \<int\> |
++========:+========:+========:+
+| 2004    | 71      | 91      |
++---------+---------+---------+
+| 2005    | 83      | 79      |
++---------+---------+---------+
+| 2006    | 97      | 65      |
++---------+---------+---------+
+| 2007    | 88      | 74      |
++---------+---------+---------+
+| 2008    | 89      | 73      |
++---------+---------+---------+
+| 2009    | 70      | 92      |
++---------+---------+---------+
+| 2010    | 79      | 83      |
++---------+---------+---------+
+| 2011    | 77      | 85      |
++---------+---------+---------+
+| 2012    | 74      | 88      |
++---------+---------+---------+
+
+The above table shows the team W/L record during those years.
 
 ### Exercise 3
-
-...
 
 ### Exercise 4
 
