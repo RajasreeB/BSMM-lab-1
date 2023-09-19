@@ -26,7 +26,9 @@ library(Lahman)
 
 ```{r glimpse-data}
 #good practise to lable your code chunks this way
+#function to see a summary of the dataset
 dplyr::glimpse(Teams)
+
 ```
 
 The `Teams` dataset has \_**3015**\_ observations (rows) and \_**48**\_ variables(columns).
@@ -162,14 +164,54 @@ mets_ben |>
     total_WPct = sum(WPct), 
     sum_resid = sum(WPct-W_hat)
   )
+
 ```
 
 In these nine years, the Mets had a combined record of 728 wins and 730 losses, for an overall winning percentage of 4.559514.
 
 ### Exercise 9
 
-...
+```{r}
+
+library(ggplot2)
+ggplot(data = Teams, aes(x = width, y = price)) +
+  geom_point() + 
+  labs(
+    x = "width", 
+    y = "price", 
+    title = "relationship between the width and price of Ikea furniture"
+    )
+```
 
 ### Exercise 10
 
-...
+```{r}
+mets_ben <- mets_ben %>% 
+  dplyr::mutate(
+    gm = ifelse(
+      yearID == 2004, 
+      "Jim Duquette", 
+      ifelse(
+        yearID >= 2005 & yearID <=2010, "Omar Minaya",
+        ifelse(yearID >=2011 & yearID <= 2012, "Sandy Alderson",NA)
+      )
+    )
+  )
+mets_ben
+```
+
+```{r}
+#Alternatively
+
+mets_ben <- mets_ben |>
+  dplyr::mutate(
+    gm = dplyr::case_when(
+      yearID == 2004 ~ "Jim Duquette", 
+      yearID >= 2005 & yearID <=2010 ~ "Omar Minaya", 
+      yearID >= 2011 & yearID <= 2012 ~ "Sandy Alderson",
+      TRUE ~ NA_character_
+    )
+  )
+mets_ben
+
+```
