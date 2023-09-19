@@ -50,81 +50,36 @@ dplyr::select(yearID, W, L)
 
 ```
 
-+---------+---------+---------+
-| yearID  | W       | L       |
-|         |         |         |
-| \<int\> | \<int\> | \<int\> |
-+========:+========:+========:+
-| 2004    | 71      | 91      |
-+---------+---------+---------+
-| 2005    | 83      | 79      |
-+---------+---------+---------+
-| 2006    | 97      | 65      |
-+---------+---------+---------+
-| 2007    | 88      | 74      |
-+---------+---------+---------+
-| 2008    | 89      | 73      |
-+---------+---------+---------+
-| 2009    | 70      | 92      |
-+---------+---------+---------+
-| 2010    | 79      | 83      |
-+---------+---------+---------+
-| 2011    | 77      | 85      |
-+---------+---------+---------+
-| 2012    | 74      | 88      |
-+---------+---------+---------+
-
-**The above table shows the team W/L record during those years.**
-
 ### Exercise 3
 
 ```{r expected winning percentage}
+
+# Selecting specific columns from the "Teams" data frame to make mets_ben
 mets_ben <- Teams |>
   dplyr::select(teamID,yearID,R,RA,G,W,L) |>
+  
+# Filtering the data to include only New York Mets ("NYN") and years 2004 to 2012
   dplyr::filter(teamID == "NYN" & yearID %in% 2004:2012)
 mets_ben
 
 dplyr::glimpse(mets_ben)
-
+# Renaming the "R" column to "RS" for clarity
 mets_ben <- mets_ben |>
   dplyr::rename(RS = R)    # new name = old name
 mets_ben
 
 ```
 
-**Runs scored and allowed are saved in a new data frame.**
-
-+----------+---------+---------+---------+
-| teamID   | yearID  | RS      | RA      |
-|          |         |         |         |
-| \<fctr\> | \<int\> | \<int\> | \<int\> |
-+:=========+========:+========:+========:+
-| NYN      | 2004    | 684     | 731     |
-+----------+---------+---------+---------+
-| NYN      | 2005    | 722     | 648     |
-+----------+---------+---------+---------+
-| NYN      | 2006    | 834     | 731     |
-+----------+---------+---------+---------+
-| NYN      | 2007    | 804     | 750     |
-+----------+---------+---------+---------+
-| NYN      | 2008    | 799     | 715     |
-+----------+---------+---------+---------+
-| NYN      | 2009    | 671     | 757     |
-+----------+---------+---------+---------+
-| NYN      | 2010    | 656     | 652     |
-+----------+---------+---------+---------+
-| NYN      | 2011    | 718     | 742     |
-+----------+---------+---------+---------+
-| NYN      | 2012    | 650     | 709     |
-+----------+---------+---------+---------+
-
 ### Exercise 4
 
 ```{r mutate(actual winning percentage)}
+
+# Calculating WPct using the formula 1 / (1 + (RA / RS)^2)
 mets_ben <- mets_ben |>
   dplyr::mutate(WPct = 1/(1+(RA/RS)^2))
 mets_ben
 
+# Calculating Expected Wins (W_hat) based on WPct and games played (G)
 mets_ben <- mets_ben |>
   dplyr::mutate(W_hat = WPct*G)
 mets_ben
@@ -133,21 +88,29 @@ mets_ben
 
 ### Exercise 5
 
--   better than expected is calculated by counting the seasons where the actual wins (W) were greater than the expected wins (W_hat).
+1.  better than expected is calculated by counting the seasons where the actual wins (W) were greater than the expected wins (W_hat).
 
--   Worse than expected is calculated by counting the seasons where the actual wins (W) were less than the expected wins (W_hat).
+2.  Worse than expected is calculated by counting the seasons where the actual wins (W) were less than the expected wins (W_hat).
 
 Mets were better than expected in three of these seasons, and worse than expected in the other six.
 
 ### Exercise 6
 
 ```{r sorting rows}
+
+# Sorting the rows of the data frame in descending order of WPct (highest to lowest)
 dplyr::arrange(mets_ben,desc(WPct))
 ```
 
 ### Exercise 7
 
-```{r}
+```{r relative performance}
+# Calculating the difference between the actual Winning Percentage (WPct) and the expected Winning Percentage (W_hat)
+
+# Arranging the data frame in descending order based on the calculated difference (Diff)
+
+# Sortinging in descending order will rank the rows by how much they exceed the expected performance.
+mets_ben <- mets_ben %>%
 mets_ben %>% 
   dplyr::mutate(Diff = WPct-W_hat) |>
   dplyr::arrange(desc(Diff))
@@ -155,53 +118,39 @@ mets_ben %>%
 
 ### Exercise 8
 
-```{r}
+```{r Summarizing the Mets performance}
 mets_ben |>
   dplyr::summarize(
-    num_years = '9', 
-    total_W = sum(W), 
-    total_L = sum(L), 
-    total_WPct = sum(WPct), 
-    sum_resid = sum(WPct-W_hat)
+    num_years = n(), #total number of years in mets_ben dataframe
+    total_W = sum(W), #total number of wins (W) across all years
+    total_L = sum(L), #total number of losses (L) across all years
+    total_WPct = sum(WPct), #sum of all Winning Percentages (WPct) across all years
+    sum_resid = sum(WPct-W_hat) #sum of the differences between WPct and W_hat
   )
 
 ```
 
 In these nine years, the Mets had a combined record of 728 wins and 730 losses, for an overall winning percentage of 4.559514.
 
-### Exercise 9
-
-```{r}
-
-library(ggplot2)
-ggplot(data = Teams, aes(x = width, y = price)) +
-  geom_point() + 
-  labs(
-    x = "width", 
-    y = "price", 
-    title = "relationship between the width and price of Ikea furniture"
-    )
-```
-
 ### Exercise 10
 
-```{r}
+```{r Discretizing the years into three chunks}
+#Discretize the years into three chunks: one for each of the three general managers under whom Ben worked
 mets_ben <- mets_ben %>% 
   dplyr::mutate(
     gm = ifelse(
-      yearID == 2004, 
-      "Jim Duquette", 
+      yearID == 2004, "Jim Duquette", 
       ifelse(
         yearID >= 2005 & yearID <=2010, "Omar Minaya",
-        ifelse(yearID >=2011 & yearID <= 2012, "Sandy Alderson",NA)
+        ifelse(yearID >=2011 & yearID <= 2012, "Sandy Alderson",NA) #if none of the conditions match, the "gm" value is set to NA
       )
     )
   )
 mets_ben
 ```
 
-```{r}
-#Alternatively
+```{r using case_when}
+#Alternatively using case_when
 
 mets_ben <- mets_ben |>
   dplyr::mutate(
@@ -214,4 +163,23 @@ mets_ben <- mets_ben |>
   )
 mets_ben
 
+```
+
+### Exercise 11
+
+```{r using group_by()}
+
+mets_ben_grouped <- mets_ben %>%
+
+#Grouping data by gm variable
+  group_by(gm) %>%
+  summarise(
+    num_years = n(),
+    total_W = sum(W),
+    total_L = sum(L),
+    avg_WPct = mean(WPct),
+    total_Diff = sum(WPct-W_hat)
+  )
+
+mets_ben_grouped
 ```
