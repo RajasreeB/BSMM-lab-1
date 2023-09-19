@@ -110,8 +110,8 @@ dplyr::arrange(mets_ben,desc(WPct))
 # Arranging the data frame in descending order based on the calculated difference (Diff)
 
 # Sortinging in descending order will rank the rows by how much they exceed the expected performance.
-mets_ben <- mets_ben %>%
-mets_ben %>% 
+
+mets_ben <- mets_ben %>% 
   dplyr::mutate(Diff = WPct-W_hat) |>
   dplyr::arrange(desc(Diff))
 ```
